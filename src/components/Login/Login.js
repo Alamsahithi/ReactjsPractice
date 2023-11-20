@@ -5,7 +5,6 @@ import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
 import AuthContext from '../../store/auth-context';
 import Input from '../Input/Input';
-impoet Input
 const emailReducer =(state,action) => {
   if(action.type === 'USER_INPUT'){
     return {value: action.val,isValid:action.valid.includes('@')}
@@ -31,6 +30,8 @@ isValid:null,
 })
 
 const authctx=useContext(AuthContext)
+  const emailInputRef=useRef()
+  const passwordInputRef= useRef()
   useEffect(()=>{
   
     console.log('effect running')
@@ -78,13 +79,22 @@ const authctx=useContext(AuthContext)
 
   const submitHandler = (event) => {
     event.preventDefault();
+    if(formIsValid){
+      authctx.onLogin(emailState.value,passwordState.value)
+    } else if (!emailIsValid){
+       emailInputRef.current.focus()
+    } else {
+passwordInputRef.current.focus()
+    }
     authctx.onLogin(emailState.value, enteredPassword);
   };
 
   return (
     <Card className={classes.login}>
       <form onSubmit={submitHandler}>
-        <Input id="email" 
+        <Input
+        ref={emailInputRef}
+         id="email" 
         label="E-mail" 
         type="email" 
         isValid={emailIsValid} 
@@ -92,7 +102,9 @@ const authctx=useContext(AuthContext)
         onChange={emailChaneHandler}
         onBlur={validateEmailHandler}
         />
-         <Input id="password" 
+         <Input 
+         ref={passwordInputRef}
+         id="password" 
         label="Password" 
         type="password" 
         isValid={passwordIsValid} 
@@ -115,7 +127,7 @@ const authctx=useContext(AuthContext)
           />
         </div>
         <div className={classes.actions}>
-          <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+          <Button type="submit" className={classes.btn} >
             Login
           </Button>
         </div>
